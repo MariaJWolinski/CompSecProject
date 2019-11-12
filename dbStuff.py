@@ -6,7 +6,8 @@ import globVar
 import device
 import sqlite3
 
-""" This mehtod gets called once, when the application is starting.
+
+""" This method gets called once, when the application is starting.
     It reads the information from the database into our global lists.
 """
 def populate_lists():
@@ -55,7 +56,8 @@ def populate_lists():
     Only call this method if you have the dbMutex,
     bc I don't remember how atomic sql things are.
     For tableNum, 0 = blackList, 1 = allowedList,
-    and 2 = greyList
+    and 2 = greyList.
+    d is the device you're adding to the table.
 """
 def add_to_table(tableNum, d):
     conn = sqlite3.connect('compSec_db.sqlite')
@@ -78,3 +80,34 @@ def add_to_table(tableNum, d):
 
     conn.commit()
     conn.close()
+
+
+""" Remove a device from a table in the database.
+    Only call this method if you have the dbMutex,
+    bc I don't remember how atomic sql things are.
+    For tableNum, 0 = blackList, 1 = allowedList,
+    and 2 = greyList.
+    d is the device you're removing from the table.
+"""
+def remove_from_table(tableNum, d):
+    conn = sqlite3.connect('compSec_db.sqlite')
+    cur = conn.cursor()
+
+    # black list
+    if tableNum == 0:
+        cur.execute('DELETE FROM blackList WHERE macAddress = ?',
+                    (d.macAddress, ))
+
+    # allowed List
+    if tableNum == 1:
+        cur.execute('DELETE FROM allowedList WHERE macAddress = ?',
+                    (d.macAddress, ))
+
+    # grey List
+    if tableNum == 2:
+        cur.execute('DELETE FROM greyList WHERE macAddress = ?',
+                    (d.macAddress, ))
+
+    conn.commit()
+    conn.close()
+
