@@ -27,6 +27,12 @@ def main_gui():
     n.add(blackTab, text='Black List')
     n.add(allowedTab, text='Allowed List')
 
+    #TODO make some kind of buttons in each tab for moving between lists
+    #i.e. move from blacklist to allowedlist and vice versa
+    
+    #TODO some kind of pop-up window when someone tries to connect 
+    #if user exits out of pop-up, leave connection in gray list
+    
     i = 0
     for d in globVar.greyList:
         l1 = Label(greyTab, text=d.macAddress, padx=5, pady=5)
