@@ -39,6 +39,9 @@ def monitor_devices():
                     dbStuff.add_to_table(2, d)
                 finally:
                     globVar.dbMutex.release()
+                
+                # TODO send message to GUI to prompt user acceptance/denial
+                     
     # end of while loop
 
 
