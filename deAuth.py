@@ -16,11 +16,14 @@ if len(sys.argv) != 5:
 """
 
 # # The interface that you want to send packets out of, needs to be set to monitor mode
+# # should be global variable
 conf.iface = "Realtek PCIe GBE Family Controller"  # This can be found in the Scapy Console via the command IFACES
 
+# should be global variable
 bssid = "00:C0:CA:90:99:FE"  # The BSSID of Wireless Access Point - This is the MAC of my WiFi PineApple
 
 # Change the client to FF:FF:FF:FF:FF:FF if you want to deauth all stations on AP
+# should come from grey list and black list
 client = "AC:1F:74:03:40:5F"  # The MAC of the client to boot off Wifi - This is the MAC of my Iphone7
 
 # count = 5  # The number of deauth packets you want to send
