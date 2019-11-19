@@ -13,6 +13,8 @@ import sqlite3
 def populate_lists():
     conn = sqlite3.connect('compSec_db.sqlite')
     cur = conn.cursor()
+    # cur.execute('DROP TABLE greyList')
+    # conn.commit()
 
     # Create the tables if they don't exist
     cur.execute('CREATE TABLE IF NOT EXISTS blackList(macAddress VARCHAR, name VARCHAR)')
