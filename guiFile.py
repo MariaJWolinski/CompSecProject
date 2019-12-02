@@ -2,64 +2,107 @@
     and responding to user input
 """
 import time
-import Tkinter
-from Tkinter import *
+import tkinter
+from tkinter import *
 import globVar
-import ttk
-
+from tkinter import ttk
+from tkinter import font
+import dbStuff
+import device
 
 def main_gui():
-    print("do the gui thing!")
-    # time.sleep(10)
+    # function to use one scroller bar for all tabs
+    def yview(self, *args):
+        self.blackTab.yview(*args)
+        self.whiteTab.yview(*args)
+        self.greyTab.yview(*args)
 
-    gui = Tkinter.Tk()
+    #function for when "move to blacklist" button is pressed
+    def move_to_blacklist():
+        #get selection
+        index = greyTab.curselection()[0]
+        selection=greyTab.get(index)
 
-    # widgets added here
-    gui.title("Kick 'em off your Wifi")
-    gui.geometry("600x600")
+        #remove from grey tab, add to black tab
+        greyTab.delete(index)
+        blackTab.insert(tkinter.END, selection)
 
-    n = ttk.Notebook(gui)
-    greyTab = ttk.Frame(n)
-    blackTab = ttk.Frame(n)
-    allowedTab = ttk.Frame(n)
+        #remove from grey data table, add to black data table
+        device_info = selection.split(" ",1)
+        obj = device.Device(device_info[0],device_info[1])
+        dbStuff.remove_from_table(2,obj)
+        dbStuff.add_to_table(0,obj)
 
-    n.add(greyTab, text='Grey List')
-    n.add(blackTab, text='Black List')
-    n.add(allowedTab, text='Allowed List')
+    #function for when "move to allowed list" button is pressed
+    def move_to_approved():
+        #get selection
+        index = greyTab.curselection()[0]
+        selection=greyTab.get(index)
 
-    #TODO make some kind of buttons in each tab for moving between lists
-    #i.e. move from blacklist to allowedlist and vice versa
-    
-    #TODO some kind of pop-up window when someone tries to connect 
-    #if user exits out of pop-up, leave connection in gray list
-    
-    i = 0
+        #remove from grey tab, add to black tab
+        greyTab.delete(index)
+        whiteTab.insert(tkinter.END, selection)
+        # 4. remove from current sql table
+        # 5. add to approved sql table
+
+        #remove from grey data table, add to allowed data table
+        device_info = selection.split(" ",1)
+        obj = device.Device(device_info[0],device_info[1])
+        dbStuff.remove_from_table(2,obj)
+        dbStuff.add_to_table(1,obj)
+
+    #make main window
+    gui = tkinter.Tk()
+    gui.title("MFA for Wi-Fi Connection")
+    gui.geometry("400x250")
+
+    #make frames for tabs and buttons
+    tabFrame = ttk.Frame(gui,width=400)
+    buttonFrame = ttk.Frame(gui,width=200)
+    n = ttk.Notebook(tabFrame,width=400)
+
+    #add addresses/names from grey list into grey tab list
+    textFont = font.Font(size=10)
+    greyTab = Listbox(tabFrame,font=textFont)
+    greyTab.pack()
     for d in globVar.greyList:
-        l1 = Label(greyTab, text=d.macAddress, padx=5, pady=5)
-        l1.grid(column=0, row=i)
-        l2 = Label(greyTab, text=d.name, padx=5, pady=5)
-        l2.grid(column=1, row=i)
-        i += 1
+        str = d.macAddress + " " + d.name
+        greyTab.insert(END,str)
 
-    i = 0
+    blackTab = Listbox(tabFrame,font=textFont)
+    blackTab.pack()
     for d in globVar.blackList:
-        l1 = Label(blackTab, text=d.macAddress, padx=5, pady=5)
-        l1.grid(column=0, row=i)
-        l2 = Label(blackTab, text=d.name, padx=5, pady=5)
-        l2.grid(column=1, row=i)
-        i += 1
+        str = d.macAddress + " " + d.name
+        blackTab.insert(END,str)
 
-    i = 0
+    whiteTab = Listbox(tabFrame,font=textFont)
+    whiteTab.pack()
     for d in globVar.allowedList:
-        l1 = Label(allowedTab, text=d.macAddress, padx=5, pady=5)
-        l1.grid(column=0, row=i)
-        l2 = Label(allowedTab, text=d.name, padx=5, pady=5)
-        l2.grid(column=1, row=i)
-        i += 1
+        str = d.macAddress + " " + d.name
+        whiteTab.insert(END,str)
 
+    #make scrollbar
+    scroller = Scrollbar(tabFrame,command=yview)
+    scroller.pack(side=RIGHT,fill=Y)
+    greyTab.config(yscrollcommand=scroller.set)
+    blackTab.config(yscrollcommand=scroller.set)
+    whiteTab.config(yscrollcommand=scroller.set)
 
+    #add tabs to notebook
+    n.add(greyTab,text='Grey List')
+    n.add(blackTab,text='Black List')
+    n.add(whiteTab,text='Approved List')
 
-    n.pack(expand=1, fill='both')
+    #create buttons to move to approved list / black list
+    greyToWhite = Button(buttonFrame,text="Move to approved list",width=16,command=move_to_approved)
+    greyToWhite.pack(anchor='ne')
+
+    greyToBlack = Button(buttonFrame,text="Move to black list",width=16,command=move_to_blacklist)
+    greyToBlack.pack(anchor="ne")
+
+    #final packing
+    n.pack(expand=1, fill='both',anchor='nw')
+    tabFrame.pack(side=TOP)
+    buttonFrame.pack(side=BOTTOM)
 
     gui.mainloop()
-
