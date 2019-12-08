@@ -9,6 +9,8 @@ from tkinter import ttk
 from tkinter import font
 import dbStuff
 import device
+import monitor
+import deauthenticate
 
 def main_gui():
     # function to use one scroller bar for all tabs
@@ -105,4 +107,9 @@ def main_gui():
     tabFrame.pack(side=TOP)
     buttonFrame.pack(side=BOTTOM)
 
-    gui.mainloop()
+
+    while True:
+        gui.update_idletasks()
+        gui.update()
+        monitor.monitor_devices()
+        deauthenticate.deauthenticate_devices()
