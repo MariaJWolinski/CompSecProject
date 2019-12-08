@@ -27,14 +27,17 @@ same time, I think that it makes sense to multi-thread our code, using
 write to the device lists.
 """
 
+guiFile.main_gui()
+
+"""
 # Create a string for each task
 monitor = threading.Thread(target=monitor.monitor_devices, args=())
-deauth = threading.Thread(target=deauthenticate.deauthenticate_devices(), args=())
+#deauth = threading.Thread(target=deauthenticate.deauthenticate_devices(), args=())
 guiThread = threading.Thread(target=guiFile.main_gui(), args=())
 
 # Start the threads
 monitor.start()
-deauth.start()
+#deauth.start()
 guiThread.start()
 
 # Join the threads
@@ -45,7 +48,7 @@ globVar.continueProcessing = 0
 
 monitor.join()
 deauth.join()
-
+"""
 
 print("Done!")
 
