@@ -13,6 +13,8 @@ import sqlite3
 def populate_lists():
     conn = sqlite3.connect('compSec_db.sqlite')
     cur = conn.cursor()
+    
+    #Uncomment the next two lines if you wish to reset your database.
     # cur.execute('DROP TABLE greyList')
     # conn.commit()
 
