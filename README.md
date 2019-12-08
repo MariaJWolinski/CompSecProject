@@ -1,4 +1,4 @@
-# CompSecProject
+# Code Instructions
 
 This code is simply executed by running 'main.py' with python3
 
